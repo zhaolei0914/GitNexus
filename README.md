@@ -145,6 +145,7 @@ gitnexus clean --all --force     # Delete all indexes
 gitnexus wiki [path]             # Generate repository wiki from knowledge graph
 gitnexus wiki --model <model>    # Wiki with custom LLM model (default: gpt-4o-mini)
 gitnexus wiki --base-url <url>   # Wiki with custom LLM API base URL
+gitnexus wiki --language zh-CN   # Wiki in Chinese (or ja, ko, etc.)
 ```
 
 ### What Your AI Agent Gets
@@ -447,6 +448,10 @@ gitnexus wiki --base-url https://api.anthropic.com/v1
 
 # Force full regeneration
 gitnexus wiki --force
+
+# Generate wiki in a specific language
+gitnexus wiki --language zh-CN
+gitnexus wiki --language ja
 ```
 
 The wiki generator reads the indexed graph structure, groups files into modules via LLM, generates per-module documentation pages, and creates an overview page — all with cross-references to the knowledge graph.

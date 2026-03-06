@@ -20,6 +20,7 @@ export interface WikiCommandOptions {
   baseUrl?: string;
   apiKey?: string;
   concurrency?: string;
+  language?: string;
   gist?: boolean;
 }
 
@@ -242,6 +243,7 @@ export const wikiCommand = async (
     model: options?.model,
     baseUrl: options?.baseUrl,
     concurrency: options?.concurrency ? parseInt(options.concurrency, 10) : undefined,
+    language: options?.language,
   };
 
   const generator = new WikiGenerator(
