@@ -45,6 +45,7 @@ import {
   PARENT_USER_PROMPT,
   OVERVIEW_SYSTEM_PROMPT,
   OVERVIEW_USER_PROMPT,
+  withLanguage,
   fillTemplate,
   formatFileListForGrouping,
   formatDirectoryTree,
@@ -61,6 +62,7 @@ export interface WikiOptions {
   model?: string;
   baseUrl?: string;
   apiKey?: string;
+  language?: string;
   maxTokensPerModule?: number;
   concurrency?: number;
 }
@@ -97,6 +99,7 @@ export class WikiGenerator {
   private llmConfig: LLMConfig;
   private maxTokensPerModule: number;
   private concurrency: number;
+  private language: string;
   private options: WikiOptions;
   private onProgress: ProgressCallback;
   private failedModules: string[] = [];
@@ -117,6 +120,7 @@ export class WikiGenerator {
     this.llmConfig = llmConfig;
     this.maxTokensPerModule = options.maxTokensPerModule ?? DEFAULT_MAX_TOKENS_PER_MODULE;
     this.concurrency = options.concurrency ?? 3;
+    this.language = options.language ?? 'en';
     const progressFn = onProgress || (() => {});
     this.onProgress = (phase, percent, detail) => {
       if (percent > 0) this.lastPercent = percent;
@@ -331,7 +335,7 @@ export class WikiGenerator {
     });
 
     const response = await callLLM(
-      prompt, this.llmConfig, GROUPING_SYSTEM_PROMPT,
+      prompt, this.llmConfig, withLanguage(GROUPING_SYSTEM_PROMPT, this.language),
       this.streamOpts('Grouping files', 15),
     );
     const grouping = this.parseGroupingResponse(response.content, files);
@@ -488,7 +492,7 @@ export class WikiGenerator {
     });
 
     const response = await callLLM(
-      prompt, this.llmConfig, MODULE_SYSTEM_PROMPT,
+      prompt, this.llmConfig, withLanguage(MODULE_SYSTEM_PROMPT, this.language),
       this.streamOpts(node.name),
     );
 
@@ -531,7 +535,7 @@ export class WikiGenerator {
     });
 
     const response = await callLLM(
-      prompt, this.llmConfig, PARENT_SYSTEM_PROMPT,
+      prompt, this.llmConfig, withLanguage(PARENT_SYSTEM_PROMPT, this.language),
       this.streamOpts(node.name),
     );
 
@@ -578,7 +582,7 @@ export class WikiGenerator {
     });
 
     const response = await callLLM(
-      prompt, this.llmConfig, OVERVIEW_SYSTEM_PROMPT,
+      prompt, this.llmConfig, withLanguage(OVERVIEW_SYSTEM_PROMPT, this.language),
       this.streamOpts('Generating overview', 88),
     );
 

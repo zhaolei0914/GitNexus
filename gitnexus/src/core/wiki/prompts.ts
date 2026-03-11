@@ -1,9 +1,41 @@
 /**
  * LLM Prompt Templates for Wiki Generation
- * 
+ *
  * All prompts produce deterministic, source-grounded documentation.
  * Templates use {{PLACEHOLDER}} substitution.
  */
+
+// ─── Language Injection ─────────────────────────────────────────────────
+
+const LANGUAGE_INSTRUCTIONS: Record<string, string> = {
+  en: '',
+  'zh-CN': '请用简体中文输出你的响应。',
+  'zh-TW': '請用繁體中文輸出你的回應。',
+  ja: '日本語で出力してください。',
+  ko: '한국어로 출력해 주세요.',
+  es: 'Por favor, responde en español.',
+  fr: 'Veuillez répondre en français.',
+  de: 'Bitte antworten Sie auf Deutsch.',
+  ru: 'Пожалуйста, отвечайте на русском языке.',
+};
+
+/**
+ * Inject language instruction into a system prompt.
+ */
+export function withLanguage(systemPrompt: string, language?: string): string {
+  if (!language || language === 'en') {
+    return systemPrompt;
+  }
+
+  const instruction = LANGUAGE_INSTRUCTIONS[language];
+
+  if (instruction) {
+    return `${systemPrompt}\n\n${instruction}`;
+  }
+
+  // Fallback: generic instruction for unknown languages
+  return `${systemPrompt}\n\nPlease output your response in ${language}.`;
+}
 
 // ─── Grouping Prompt ──────────────────────────────────────────────────
 
