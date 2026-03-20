@@ -20,6 +20,7 @@ export interface WikiCommandOptions {
   baseUrl?: string;
   apiKey?: string;
   concurrency?: string;
+  lang?: string;
   gist?: boolean;
 }
 
@@ -241,6 +242,7 @@ export const wikiCommand = async (
     force: options?.force,
     model: options?.model,
     baseUrl: options?.baseUrl,
+    language: options?.lang,
     concurrency: options?.concurrency ? parseInt(options.concurrency, 10) : undefined,
   };
 

@@ -68,6 +68,7 @@ program
   .option('--base-url <url>', 'LLM API base URL (default: OpenAI)')
   .option('--api-key <key>', 'LLM API key (saved to ~/.gitnexus/config.json)')
   .option('--concurrency <n>', 'Parallel LLM calls (default: 3)', '3')
+  .option('--lang <language>', 'Output language (e.g., en, zh-CN, ja)', 'en')
   .option('--gist', 'Publish wiki as a public GitHub Gist after generation')
   .action(createLazyAction(() => import('./wiki.js'), 'wikiCommand'));
 
