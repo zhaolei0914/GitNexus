@@ -93,6 +93,7 @@ program
   )
   .option('--no-reasoning-model', 'Disable reasoning model mode (overrides saved config)')
   .option('--concurrency <n>', 'Parallel LLM calls (default: 3)', '3')
+  .option('--language <lang>', 'Output language for wiki (e.g. zh-CN, ja, ko)')
   .option('--gist', 'Publish wiki as a public GitHub Gist after generation')
   .option('-v, --verbose', 'Enable verbose output (show LLM commands and responses)')
   .option('--review', 'Stop after grouping to review module structure before generating pages')

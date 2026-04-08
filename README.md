@@ -215,6 +215,7 @@ gitnexus group sync <name>       # Extract contracts and match across repos/serv
 gitnexus group contracts <name>  # Inspect extracted contracts and cross-links
 gitnexus group query <name> <q>  # Search execution flows across all repos in a group
 gitnexus group status <name>     # Check staleness of repos in a group
+gitnexus wiki --language zh-CN   # Wiki in Chinese (or ja, ko, etc.)
 ```
 
 ### What Your AI Agent Gets
@@ -543,6 +544,10 @@ gitnexus wiki --base-url https://api.anthropic.com/v1
 
 # Force full regeneration
 gitnexus wiki --force
+
+# Generate wiki in a specific language
+gitnexus wiki --language zh-CN
+gitnexus wiki --language ja
 ```
 
 The wiki generator reads the indexed graph structure, groups files into modules via LLM, generates per-module documentation pages, and creates an overview page — all with cross-references to the knowledge graph.
