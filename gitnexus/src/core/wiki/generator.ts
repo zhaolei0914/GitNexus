@@ -65,6 +65,7 @@ export interface WikiOptions {
   concurrency?: number;
   /** If true, stop after building module tree for user review */
   reviewOnly?: boolean;
+  language?: string;
 }
 
 export interface WikiMeta {
@@ -106,6 +107,7 @@ export class WikiGenerator {
   private llmConfig: LLMConfig;
   private maxTokensPerModule: number;
   private concurrency: number;
+  private language?: string;
   private options: WikiOptions;
   private onProgress: ProgressCallback;
   private failedModules: string[] = [];
@@ -125,6 +127,7 @@ export class WikiGenerator {
     this.options = options;
     this.llmConfig = llmConfig;
     this.maxTokensPerModule = options.maxTokensPerModule ?? DEFAULT_MAX_TOKENS_PER_MODULE;
+    this.language = options.language;
     this.concurrency = options.concurrency ?? 3;
     const progressFn = onProgress || (() => {});
     this.onProgress = (phase, percent, detail) => {
@@ -588,7 +591,10 @@ export class WikiGenerator {
       PROCESSES: formatProcesses(processes),
     });
 
-    const response = await this.invokeLLM(prompt, MODULE_SYSTEM_PROMPT, this.streamOpts(node.name));
+    const response = await callLLM(
+      prompt, this.llmConfig, this.withLanguage(MODULE_SYSTEM_PROMPT),
+      this.streamOpts(node.name),
+    );
 
     // Write page with front matter
     const pageContent = `# ${node.name}\n\n${response.content}`;
@@ -629,7 +635,10 @@ export class WikiGenerator {
       CROSS_PROCESSES: formatProcesses(processes),
     });
 
-    const response = await this.invokeLLM(prompt, PARENT_SYSTEM_PROMPT, this.streamOpts(node.name));
+    const response = await callLLM(
+      prompt, this.llmConfig, this.withLanguage(PARENT_SYSTEM_PROMPT),
+      this.streamOpts(node.name),
+    );
 
     const pageContent = `# ${node.name}\n\n${response.content}`;
     await fs.writeFile(path.join(this.wikiDir, `${node.slug}.md`), pageContent, 'utf-8');
@@ -675,9 +684,8 @@ export class WikiGenerator {
       TOP_PROCESSES: formatProcesses(topProcesses),
     });
 
-    const response = await this.invokeLLM(
-      prompt,
-      OVERVIEW_SYSTEM_PROMPT,
+    const response = await callLLM(
+      prompt, this.llmConfig, this.withLanguage(OVERVIEW_SYSTEM_PROMPT),
       this.streamOpts('Generating overview', 88),
     );
 
@@ -1061,6 +1069,14 @@ export class WikiGenerator {
       }
     }
     return null;
+  }
+
+  /**
+   * Append a language instruction to the system prompt when --language is set.
+   */
+  private withLanguage(systemPrompt: string): string {
+    if (!this.language) return systemPrompt;
+    return `${systemPrompt}\n\nIMPORTANT: Write ALL documentation output in ${this.language}. Use ${this.language} for headings, descriptions, and explanations. Keep code identifiers, file paths, and Mermaid node labels in their original form.`;
   }
 
   private slugify(name: string): string {

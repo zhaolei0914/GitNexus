@@ -28,6 +28,7 @@ export interface WikiCommandOptions {
   apiVersion?: string;
   reasoningModel?: boolean;
   concurrency?: string;
+  language?: string;
   gist?: boolean;
   provider?: LLMProvider;
   verbose?: boolean;
@@ -382,6 +383,7 @@ export const wikiCommand = async (inputPath?: string, options?: WikiCommandOptio
     force: options?.force,
     concurrency: options?.concurrency ? parseInt(options.concurrency, 10) : undefined,
     reviewOnly: options?.review,
+    language: options?.language,
   };
 
   const generator = new WikiGenerator(
